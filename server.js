@@ -1,6 +1,17 @@
 var request = require('request');
 var Twitter = require('Twitter');
 
+var api_key_open_secrets = "811b6aa0bc49e9152343a890d2db561a";
+var api_key_sunlight = "89b41fe32fd34706841844bf65204d1e";
+var api_key_youtube = "AIzaSyBv2Jix2fulj2kJQX4_cQ_uttcpW4oG2bU";
+var api_key_facebook = "1670017813271437%7Chk47t7Q5iTllrIzh-eMMvNAuL4Q";
+var client = new Twitter({
+  consumer_key: 'uTVf2nOQDoEdpgV2oZiSLF7Cr',
+  consumer_secret: 'ZlEr8eL65whCDRWdcPnig9V07NbpyJQpUqPzJB8LETa8hRIjoP',
+  access_token_key: '2239863571-qV1IOzbHtcgA30PcNr84irALXIsP1dzPdOHpCzk',
+  access_token_secret: 'uxJUzuaO1hPl2oSRRIhahgNV3WWvgmhj1i2hcPfZqY9Z1'
+});
+
 
 var profile = {
     title: "",
@@ -120,7 +131,6 @@ function parse(json) {
     getTwitterFollowers();
     getYoutubeSubsAndViewCount();
     getYoutubeVideos();
-    getProPicUrl();
 }
 
 function getFacebookLikes() {
@@ -149,6 +159,7 @@ function getTwitterFollowers() {
                 console.log("Successful Twitter");
                 profile.twitter.push({followers_count: result.followers_count});
                 console.log("Followers: " + result.followers_count);
+                getProPicUrl();
             }
         });
     }
@@ -213,8 +224,25 @@ function getTopDonators(count) {
 }
 
 function getYoutubeVideos() {
+    if (profile.youtube[0].id !== null) {
+
+    }
 }
 
 function getProPicUrl() {
+    var id = profile.twitter[0].id;
+    if (id !== null) {
+        client.get("users/show", {screen_name: id}, function(error, result, response) {
+            if(!error && response.statusCode == 200) {
+                var split = result.profile_image_url.split("_normal");
+                var url = "";
+                for (var i = 0; i < split.length; i++) {
+                    url += split[i];
+                }
+                profile.propic_url = url;
+                console.log(profile.propic_url);
+            }
+        });
+    }
 }
 
