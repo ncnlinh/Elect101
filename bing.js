@@ -1,7 +1,16 @@
 var request = require('request');
-var apiBing = 'CEjg3DV9TaJCmvXliLfuFdkelGQkaleLMGZ+gzv87Wg';
+var http = require('http');
 
+var stateMapping = require('./states.json')
+
+var apiBing = 'CEjg3DV9TaJCmvXliLfuFdkelGQkaleLMGZ+gzv87Wg';
 var Bing = require('node-bing-api')({ accKey: apiBing });
+
+var myRegion;
+
+function stateAbb(location) {
+	return "US" + "." + stateMapping[location];
+}
 
 function searchNews(param, location) {
 	Bing.news(param, {
@@ -23,22 +32,17 @@ function searchNews(param, location) {
 	});
 }
 
-searchNews("Donald Trump", "US.WA")
-// var options = {
-// 	url: '' + apiKey,
-// 	method: 'GET'
-// };
+function findLocation() {
+	http.get('http://ipinfo.io', function(res) {
+		res.on('data', function (data) {
+			var retval = JSON.parse(data.toString());
 
-// var res = '';
+			myRegion = retval['region'];
+			console.log(myRegion);
 
-// request(options, function (error, response, body) {
-// 	if (!error && response.statusCode == 200) {
-// 		res = body;
-// 	} else {
-// 		res = 'Not found';
-// 	}
+			searchNews("Donald Trump", stateAbb("New York"));
+		});
+	});
+}
 
-// 	resJSON = JSON.parse(res);
-
-// 	console.log(resJSON);
-// })
+// searchNews("Donald Trump", stateAbb("New York"));
